@@ -1,6 +1,8 @@
 import type { Context } from 'hono'
-import { AppContext } from '../../core/types'
+import { AppContext } from '../../types'
 import { HTTPException } from 'hono/http-exception'
+
+// ***** 公開api *****
 
 const mockUser = {
     id: 'user-123',

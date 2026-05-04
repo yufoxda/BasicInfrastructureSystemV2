@@ -1,5 +1,5 @@
 import type { Context, Next } from 'hono'
-import type { AppContext } from './types'
+import type { AppContext } from '../../types'
 
 
 export type authUser = {

@@ -1,7 +1,8 @@
-import { authUser, appUser } from './auth'
+import { authUser, appUser } from './api/core/auth'
 
 export type CloudflareBindings = {
-  DATABASE_URL: string
+  SUPABASE_PUBLISHABLE_KEY: string
+  SUPABASE_URL: string
 }
 
 export type AppContext = {

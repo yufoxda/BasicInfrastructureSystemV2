@@ -2,12 +2,13 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { swaggerUI } from '@hono/swagger-ui'
 import { cors } from 'hono/cors'
 
-import type { AppContext } from './core/types'
+import type { AppContext } from '../types'
 import { dbMiddleware } from './core/db'
 import { authMiddleware } from './core/auth'
 import { errorHandler } from './core/error'
 
-import { userRouter } from './features/user/router'
+import { userRouter } from './user/router'
+import { roleRouter } from './role/router'
 
 
 
@@ -29,6 +30,7 @@ const app = new OpenAPIHono<AppContext>()
   })
   .use('/ui', swaggerUI({ url: '/doc' }))
   .route('/users', userRouter)
+  .route('/roles', roleRouter)
 
 
   .onError(errorHandler)

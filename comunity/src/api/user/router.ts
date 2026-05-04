@@ -1,6 +1,6 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { UserSchema, UpdateUserSchema } from "./schema";
-import type { AppContext } from "../../core/types";
+import type { AppContext } from "../../types";
 import { 
     createUserService, 
     getUserService,
@@ -9,7 +9,6 @@ import {
     updateUserByIdService,
     deleteUserByIdService,
 } from "./service";
-import { get } from "node:http";
 
 // ***** users *****
 // ユーザー情報の管理

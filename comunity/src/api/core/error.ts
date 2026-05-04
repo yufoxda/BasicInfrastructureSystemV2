@@ -1,5 +1,5 @@
 import type { ErrorHandler } from 'hono'
-import { AppContext } from './types'
+import { AppContext } from '../../types'
 
 export const errorHandler: ErrorHandler<AppContext> = (err, c) => {
   console.error('Unhandled Exception:', err)
