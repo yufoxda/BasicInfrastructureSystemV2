@@ -7,7 +7,7 @@ import { dbMiddleware } from './core/db'
 import { authMiddleware } from './core/auth'
 import { errorHandler } from './core/error'
 
-import { userRouter } from './features/menber/router'
+import { userRouter } from './api_v0/menber/router'
 
 
 
