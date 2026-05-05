@@ -3,23 +3,23 @@ import { channelSchema, updateChannelSchema} from "./schema"
 import { AppContext } from "../../core/types"
 import { authMiddleware } from "../../core/auth"
 import {
-    createChunnelServce,
-    getchannelServce,
-    updatechannelServce,
-    deletechannelServce
+    createChannelService,
+    getChannelService,
+    updateChannelService,
+    deleteChannelService
 } from "./service"
 
-// ***** chunnel *****
+// ***** channel *****
 // チャンネルの管理
 // 管理者(admin)のみが操作
-// path: /chunnel
+// path: /channel
 // *****************
 
 // create
-const createChunnelRoute = createRoute({
+const createChannelRoute = createRoute({
     method: 'post',
     path: '/',
-    require: [authMiddleware] as const,
+    middleware: [authMiddleware] as const,
     responses: {
         201: {
             description: 'channel作成に成功',
@@ -37,10 +37,10 @@ const createChunnelRoute = createRoute({
 
 
 // read
-const getchannelRoute = createRoute({
+const getChannelRoute = createRoute({
     method: 'get',
     path: '/',
-    require: [authMiddleware] as const,
+    middleware: [authMiddleware] as const,
     responses: {
         200: {
             description: 'チャンネル情報の取得に成功',
@@ -55,13 +55,13 @@ const getchannelRoute = createRoute({
 })
 
 // update
-const updatechannelRoute = createRoute({
+const updateChannelRoute = createRoute({
     method: 'put',
     path: '/',
     request: {
         params: z.object({
-            chunnelId: z.string().openapi({ example: 'user-123' }),
-            chunneldata: updateChannelSchema
+            channelId: z.string().openapi({ example: 'user-123' }),
+            channelData: updateChannelSchema
         }),
     },
     responses: {
@@ -78,7 +78,7 @@ const updatechannelRoute = createRoute({
 
 
 // delete
-const deletechannelRoute = createRoute({
+const deleteChannelRoute = createRoute({
     method: 'delete',
     path: '/',
     request: {
@@ -93,8 +93,8 @@ const deletechannelRoute = createRoute({
     },
 })
 
-export const roleRouter = new OpenAPIHono<AppContext>()
-    .openapi(createChunnelRoute, createChunnelServce)
-    .openapi(getchannelRoute, getchannelServce)
-    .openapi(updatechannelRoute, updatechannelServce)
-    .openapi(deletechannelRoute, deletechannelServce)
+export const channelRouter = new OpenAPIHono<AppContext>()
+    .openapi(createChannelRoute, createChannelService)
+    .openapi(getChannelRoute, getChannelService)
+    .openapi(updateChannelRoute, updateChannelService)
+    .openapi(deleteChannelRoute, deleteChannelService)

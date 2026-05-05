@@ -14,7 +14,7 @@ export const UserSchema = z.object({
     updated_at: z.string().openapi({ example: '2024-01-02T12:00:00Z' }),
     discord_id: z.string().openapi({ example: '123456789012345678' }),
     auth_id: z.string().openapi({ example: 'auth0|1234567890abcdef' }),
-    menber_id: z.string().openapi({ example: 'member-123' }),
+    member_id: z.string().openapi({ example: 'member-123' }),
 }).openapi('User')
 
 export const UpdateUserSchema = z.object({

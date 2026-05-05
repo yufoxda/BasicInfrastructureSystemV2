@@ -1,7 +1,7 @@
 import type { Context } from 'hono'
 import { AppContext } from '../../core/types'
 
-const mockchannel = {
+const mockChannel = {
     id: 'channel-123',
     name: '雑談',
     categoryId: 'channel-123',
@@ -10,18 +10,18 @@ const mockchannel = {
 }
 
 
-export const createChunnelServce = async (c: Context<AppContext> ) => {
-    return c.json(mockchannel, 201);
+export const createChannelService = async (c: Context<AppContext> ) => {
+    return c.json(mockChannel, 201);
 }
 
-export const getchannelServce = async (c: Context<AppContext> ) => {
-    return c.json(mockchannel, 200);
+export const getChannelService = async (c: Context<AppContext> ) => {
+    return c.json(mockChannel, 200);
 }
 
-export const updatechannelServce = async (c: Context<AppContext> ) => {
-    return c.json(mockchannel, 200);
+export const updateChannelService = async (c: Context<AppContext> ) => {
+    return c.json(mockChannel, 200);
 }
 
-export const deletechannelServce =async (c: Context<AppContext> ) => {
+export const deleteChannelService =async (c: Context<AppContext> ) => {
     return c.json(null, 200);
 }

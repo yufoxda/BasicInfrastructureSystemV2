@@ -3,22 +3,23 @@ import { UserSchema, UpdateUserSchema } from "./schema";
 import type { AppContext } from "../../core/types";
 import { 
     createUserService, 
-    getUserService,
-    getUsersByIdService,
-    updateUserService,
+    listUsersService,
+    getUserMeService,
+    getUserByIdService,
+    updateUserMeService,
     updateUserByIdService,
     deleteUserByIdService,
 } from "./service";
 
 // ***** users *****
 // ユーザー情報の管理
-// 基本は / を使用して自分自身の情報を操作する
-// 管理者(admin)のみが param idを渡して を使用して他者の情報を操作できる
-// path: /users
+// /me: 自分自身の情報を操作する
+// /:id: 管理者(admin)のみが他者の情報を操作できる
+// /: 一覧取得や作成
+// path: /user
 // *****************
 
-// create
-// admin のみ
+// create (admin only)
 const createUserRoute = createRoute({
     method: 'post',
     path: '/',
@@ -37,10 +38,31 @@ const createUserRoute = createRoute({
     },
 });
 
-// read 
-const getUserRoute = createRoute({
+// read
+
+// list (admin only)
+const listUsersRoute = createRoute({
     method: 'get',
     path: '/',
+    responses: {
+        200: {
+            description: 'ユーザー一覧の取得に成功',
+            content: {
+                'application/json': {
+                    schema: UserSchema.array(),
+                },
+            },
+        },
+        403: {
+            description: '権限がありません',
+        },
+    },
+})
+
+// 自身
+const getUserMeRoute = createRoute({
+    method: 'get',
+    path: '/me',
     responses: {
         200: {
             description: '自身のユーザー情報の取得に成功',
@@ -56,14 +78,13 @@ const getUserRoute = createRoute({
     },
 })
 
-// admin のみ 
-// id で一括取得
-const getUsersByIdRoute = createRoute({
+//  特定ID (admin only)
+const getUserByIdRoute = createRoute({
     method: 'get',
-    path: '/',
+    path: '/{id}',
     request: {
         params: z.object({
-            id: z.string().openapi({ example: 'user-123' }).array(),
+            id: z.string().openapi({ example: 'user-123' }),
         }),
     },
     responses: {
@@ -71,7 +92,7 @@ const getUsersByIdRoute = createRoute({
             description: 'ユーザー情報の取得に成功',
             content: {
                 'application/json': {
-                    schema: UserSchema.array(),
+                    schema: UserSchema,
                 },
             },
         },
@@ -84,11 +105,10 @@ const getUsersByIdRoute = createRoute({
     },
 })
 
-// update
-// 自分自身の情報の更新
-const updateUserRoute = createRoute({
+// update 自身
+const updateUserMeRoute = createRoute({
     method: 'put',
-    path: '/',
+    path: '/me',
     request: {
         body: {
             content: {
@@ -116,10 +136,10 @@ const updateUserRoute = createRoute({
     },
 })
 
-// admin のみ　id での更新
+// update 特定ID (admin only)
 const updateUserByIdRoute = createRoute({
     method: 'put',
-    path:'/',
+    path:'/{id}',
     request: {
         params: z.object({
             id: z.string().openapi({ example: 'user-123' }),
@@ -153,10 +173,10 @@ const updateUserByIdRoute = createRoute({
     },
 })
 
-// delete (admin only)
+// delete 特定ID (admin only)
 const deleteUserByIdRoute = createRoute({
     method: 'delete',
-    path: '/',
+    path: '/{id}',
     request: {
         params: z.object({
             id: z.string().openapi({ example: 'user-123' }),
@@ -179,10 +199,9 @@ const deleteUserByIdRoute = createRoute({
 
 export const userRouter = new OpenAPIHono<AppContext>()
     .openapi(createUserRoute, createUserService)
-    .openapi(getUserRoute, getUserService)
-    .openapi(getUsersByIdRoute, getUsersByIdService)
-    .openapi(updateUserRoute, updateUserService)
+    .openapi(listUsersRoute, listUsersService)
+    .openapi(getUserMeRoute, getUserMeService)
+    .openapi(getUserByIdRoute, getUserByIdService)
+    .openapi(updateUserMeRoute, updateUserMeService)
     .openapi(updateUserByIdRoute, updateUserByIdService)
     .openapi(deleteUserByIdRoute, deleteUserByIdService)
-
-

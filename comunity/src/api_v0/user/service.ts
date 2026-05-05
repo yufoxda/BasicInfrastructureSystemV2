@@ -16,7 +16,7 @@ const mockUser = {
     updated_at: '2024-01-02T12:00:00Z',
     discord_id: '123456789012345678',
     auth_id: 'auth0|1234567890abcdef',
-    menber_id: 'member-123'
+    member_id: 'member-123'
 };
 
 export const createUserService = async (c: Context<AppContext>) => {
@@ -24,25 +24,32 @@ export const createUserService = async (c: Context<AppContext>) => {
     return c.json({ ...mockUser, ...body }, 201);
 };
 
-// 
-export const getUserService = async (c: Context<AppContext>) => {
+export const listUsersService = async (c: Context<AppContext>) => {
     const user = c.get('appUser');
-    // 実際には user.id を使ってDBから取得する
+    if (user.role !== 'admin') {
+        throw new HTTPException(403, { message: 'Forbidden' });
+    }
+    // 実際にはDBから一覧を取得
+    return c.json([mockUser], 200);
+};
+
+export const getUserMeService = async (c: Context<AppContext>) => {
+    const user = c.get('appUser');
     console.log(`Fetching info for current user: ${user.id}`);
     return c.json(mockUser, 200);
 };
 
-export const getUsersByIdService = async (c: Context<AppContext>) => {
+export const getUserByIdService = async (c: Context<AppContext>) => {
     const user = c.get('appUser');
     if (user.role !== 'admin') {
         throw new HTTPException(403, { message: 'Forbidden' });
     }
     const id = c.req.param('id');
     console.log(`Admin fetching user: ${id}`);
-    return c.json([mockUser], 200);
+    return c.json(mockUser, 200);
 };
 
-export const updateUserService = async (c: Context<AppContext>) => {
+export const updateUserMeService = async (c: Context<AppContext>) => {
     const user = c.get('appUser');
     const body = await c.req.json();
     console.log(`Updating current user ${user.id} with:`, body);
@@ -51,8 +58,12 @@ export const updateUserService = async (c: Context<AppContext>) => {
 
 export const updateUserByIdService = async (c: Context<AppContext>) => {
     const user = c.get('appUser');
+    if (user.role !== 'admin') {
+        throw new HTTPException(403, { message: 'Forbidden' });
+    }
+    const id = c.req.param('id');
     const body = await c.req.json();
-    console.log(`Updating current user ${user.id} with:`, body);
+    console.log(`Admin updating user ${id} with:`, body);
     return c.json({ ...mockUser, ...body }, 200);
 };
 

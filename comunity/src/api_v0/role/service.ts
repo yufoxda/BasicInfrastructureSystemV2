@@ -20,7 +20,7 @@ export const getRolesByUserIdService = async (c: Context<AppContext> ) => {
     return c.json([mockRole], 200);
 }
 
-export const getRoleByRolrIdService =async (c: Context<AppContext> ) => {
+export const getRoleByRoleIdService =async (c: Context<AppContext> ) => {
     return c.json(mockRole, 200);
 }
 

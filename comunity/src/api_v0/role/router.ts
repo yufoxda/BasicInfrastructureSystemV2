@@ -1,11 +1,11 @@
 import { createRoute , OpenAPIHono, z } from "@hono/zod-openapi"
-import { roleSchema, updateRoleSchema } from "./shcema" 
+import { roleSchema, updateRoleSchema } from "./schema" 
 import { AppContext } from "../../core/types"
 import {
     createRoleService,
     getRolesService,
     getRolesByUserIdService,
-    getRoleByRolrIdService,
+    getRoleByRoleIdService,
     updateRolesService,
     updateRoleService,
     deleteRoleService
@@ -13,16 +13,17 @@ import {
 
 
 // ***** roles *****
-// ユーザー情報の管理
-// 基本は / を使用して自分自身の情報,role情報を取得
-// 管理者(admin)のみが操作
+// ロール情報の管理
+// /me: 自分自身の情報を操作
+// /user/:userId: 特定ユーザーのロール操作 (admin)
+// /:id: ロール自体の操作 (admin)
 // path: /role
 // *****************
 
 // create 
 // 割り当ててるroleの追加はupdateで
 //adminのみ　role自体を作る
-const createroleRoute = createRoute({
+const createRoleRoute = createRoute({
     method: 'post',
     path: '/',
     responses: {
@@ -42,9 +43,9 @@ const createroleRoute = createRoute({
 
 // read
 // 自身のrole
-const getRolesRoute = createRoute({
+const getRolesMeRoute = createRoute({
     method: 'get',
-    path: '/',
+    path: '/me',
     responses: {
         200: {
             description: '自身のユーザー情報の取得に成功',
@@ -61,7 +62,7 @@ const getRolesRoute = createRoute({
 // admin 他人のロール
 const getRolesByUserIdRoute = createRoute({
     method: 'get',
-    path: '/',
+    path: '/user/{userId}',
     request: {
         params: z.object({
             userId: z.string().openapi({ example: 'user-123' }),
@@ -83,10 +84,10 @@ const getRolesByUserIdRoute = createRoute({
 // role自体の取得
 const getRoleByRoleIdRoute = createRoute({
     method: 'get',
-    path: '/',
+    path: '/{roleId}',
     request: {
         params: z.object({
-            roleId: z.string().openapi({ example: 'user-123' }),
+            roleId: z.string().openapi({ example: 'role-123' }),
         }),
     },
     responses: {
@@ -106,14 +107,22 @@ const getRoleByRoleIdRoute = createRoute({
 // 自身のroleの操作は禁止
 
 // 他人のロールの更新
-const updateRolesRoute = createRoute({
+const updateRolesByUserIdRoute = createRoute({
     method: 'put',
-    path: '/',
+    path: '/user/{userId}',
     request: {
         params: z.object({
             userId: z.string().openapi({ example: 'user-123' }),
-            roleIds: z.string().openapi({ example: 'user-123' }).array()
         }),
+        body: {
+            content: {
+                'application/json': {
+                    schema: z.object({
+                        roleIds: z.string().array()
+                    })
+                }
+            }
+        }
     },
     responses: {
         200: {
@@ -130,18 +139,25 @@ const updateRolesRoute = createRoute({
 // role自体の更新 admin
 const updateRoleRoute = createRoute({
     method: 'put',
-    path: '/',
+    path: '/{roleId}',
     request: {
         params: z.object({
-            role: updateRoleSchema
+            roleId: z.string().openapi({ example: 'role-123' }),
         }),
+        body: {
+            content: {
+                'application/json': {
+                    schema: updateRoleSchema
+                },
+            },
+        }
     },
     responses: {
         200: {
             description: 'roleの取得に成功',
             content: {
                 'application/json': {
-                    schema: updateRoleSchema
+                    schema: roleSchema
                 },
             },
         },
@@ -151,12 +167,12 @@ const updateRoleRoute = createRoute({
 // delete
 // 割り当ててるroleの削除はupdateで
 // adminのみ　role自体
-const deleteRoleROute = createRoute({
+const deleteRoleRoute = createRoute({
     method: 'delete',
-    path: '/',
+    path: '/{roleId}',
     request: {
         params: z.object({
-            roleId: z.string().openapi({ example: 'user-123' }),
+            roleId: z.string().openapi({ example: 'role-123' }),
         }),
     },
     responses: {
@@ -167,10 +183,10 @@ const deleteRoleROute = createRoute({
 })
 
 export const roleRouter = new OpenAPIHono<AppContext>()
-    .openapi(createroleRoute, createRoleService)
-    .openapi(getRolesRoute, getRolesService)
+    .openapi(createRoleRoute, createRoleService)
+    .openapi(getRolesMeRoute, getRolesService)
     .openapi(getRolesByUserIdRoute, getRolesByUserIdService)
-    .openapi(getRoleByRoleIdRoute, getRoleByRolrIdService)
-    .openapi(updateRolesRoute, updateRolesService)
+    .openapi(getRoleByRoleIdRoute, getRoleByRoleIdService)
+    .openapi(updateRolesByUserIdRoute, updateRolesService)
     .openapi(updateRoleRoute, updateRoleService)
-    .openapi(deleteRoleROute, deleteRoleService)
+    .openapi(deleteRoleRoute, deleteRoleService)
