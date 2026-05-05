@@ -9,13 +9,12 @@ import { errorHandler } from './core/error'
 
 import { apiv0Router } from './api_v0/router'
 
-
-
 const app = new OpenAPIHono<AppContext>()
 
   .use('*',cors())
   .use('*',dbMiddleware)
   .use('*',authMiddleware)
+  
   .get('/health', (c: any): Response => c.json({ status: 'ok' }))
   .get('doc',(c: any): Response => {
     return c.json((app as OpenAPIHono).getOpenAPI31Document({
@@ -29,7 +28,6 @@ const app = new OpenAPIHono<AppContext>()
   })
   .use('/ui', swaggerUI({ url: '/doc' }))
   .route('/api/v0', apiv0Router)
-
 
   .onError(errorHandler)
   
