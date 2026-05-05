@@ -2,11 +2,9 @@ import type { Context } from 'hono'
 import { AppContext } from '../../core/types'
 
 const mockChannel = {
-    id: 'channel-123',
-    name: '雑談',
-    categoryId: 'channel-123',
-    created_at: '2024-01-01T12:00:00Z',
-    updated_at: '2024-01-02T12:00:00Z',
+  channel_id: "123e4567-e89b-12d3-a456-426614174000" ,
+    channel_name: "admin" ,
+    category_id: "123e4567-e89b-12d3-a456-426614174000"
 }
 
 

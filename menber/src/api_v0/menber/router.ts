@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { UserSchema, UpdateUserSchema } from "./schema";
+import { menberSchema, UpdateMenberSchema } from "./schema";
 import type { AppContext } from "../../core/types";
 import { 
     createMenberService,
@@ -28,7 +28,7 @@ const createMenberRoute = createRoute({
             description: 'ユーザーの作成に成功',
             content: {
                 'application/json': {
-                    schema: UserSchema,
+                    schema: menberSchema,
                 },
             },
         },
@@ -48,7 +48,7 @@ const getMenberRoute = createRoute({
             description: '自身のユーザー情報の取得に成功',
             content: {
                 'application/json': {
-                    schema: UserSchema,
+                    schema: menberSchema,
                 },
             },
         },
@@ -73,7 +73,7 @@ const getMenbersByIdRoute = createRoute({
             description: 'ユーザー情報の取得に成功',
             content: {
                 'application/json': {
-                    schema: UserSchema.array(),
+                    schema: menberSchema.array(),
                 },
             },
         },
@@ -101,7 +101,7 @@ const getMenbersByConditionRoute = createRoute({
             description: 'ユーザー一覧の取得に成功',
             content: {
                 'application/json': {
-                    schema: UserSchema.array(),
+                    schema: menberSchema.array(),
                 },
             },
         },
@@ -120,7 +120,7 @@ const updateMenberRoute = createRoute({
         body: {
             content: {
                 'application/json': {
-                    schema: UpdateUserSchema,
+                    schema: UpdateMenberSchema,
                 },
             },
         },
@@ -130,7 +130,7 @@ const updateMenberRoute = createRoute({
             description: '自身のユーザー情報の更新に成功',
             content: {
                 'application/json': {
-                    schema: UserSchema,
+                    schema: menberSchema,
                 },
             },
         },
@@ -154,7 +154,7 @@ const updateMenberByIdRoute = createRoute({
         body: {
             content: {
                 'application/json': {
-                    schema: UpdateUserSchema,
+                    schema: UpdateMenberSchema,
                 },
             },
         },
@@ -164,7 +164,7 @@ const updateMenberByIdRoute = createRoute({
             description: 'ユーザー情報の更新に成功',
             content: {
                 'application/json': {
-                    schema: UserSchema,
+                    schema: menberSchema,
                 },
             },
         },
