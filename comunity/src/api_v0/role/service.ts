@@ -1,35 +1,44 @@
-import type { Context } from 'hono'
-import { AppContext } from '../../core/types'
+import type { Context } from "hono"
+import { AppContext } from "../../core/types"
 
-const mockRole = {
-    role_id: "123e4567-e89b-12d3-a456-426614174000" ,
-    role_name: "admin",
-}
+/**
+ * Role Service
+ * ロール定義のマスターデータを管理するビジネスロジックを提供します。
+ */
 
-export const createRoleService = async (c: Context<AppContext> ) => {
-    return c.json(mockRole, 201);
-}
+const mockRole = { 
+    role_id: "r-123", 
+    role_name: "admin" 
+};
 
-export const getRolesService = async (c: Context<AppContext> ) => {
+// --- Create ---
+
+export const createRoleService = async (c: Context<AppContext>) => {
+    const body = await c.req.json();
+    return c.json({ ...mockRole, ...body }, 201);
+};
+
+// --- Read ---
+
+export const listRolesService = async (c: Context<AppContext>) => {
     return c.json([mockRole], 200);
-}
+};
 
-export const getRolesByUserIdService = async (c: Context<AppContext> ) => {
-    return c.json([mockRole], 200);
-}
+export const getRoleByIdService = async (c: Context<AppContext>) => {
+    const id = c.req.param("id");
+    return c.json({ ...mockRole }, 200);
+};
 
-export const getRoleByRoleIdService =async (c: Context<AppContext> ) => {
-    return c.json(mockRole, 200);
-}
+// --- Update ---
 
-export const updateRolesService = async (c: Context<AppContext> ) => {
-    return c.json([mockRole], 200);
-}
+export const updateRoleService = async (c: Context<AppContext>) => {
+    const id = c.req.param("id");
+    const body = await c.req.json();
+    return c.json({ ...mockRole, ...body, role_id: id }, 200);
+};
 
-export const updateRoleService = async (c: Context<AppContext> ) => {
-    return c.json(mockRole, 200);
-}
+// --- Delete ---
 
-export const deleteRoleService =async (c: Context<AppContext> ) => {
-    return c.json(null, 200);
-}
+export const deleteRoleService = async (c: Context<AppContext>) => {
+    return c.body(null, 204);
+};

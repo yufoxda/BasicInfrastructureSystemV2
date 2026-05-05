@@ -1,25 +1,58 @@
-import type { Context } from 'hono'
-import { AppContext } from '../../core/types'
+import type { Context } from "hono"
+import { AppContext } from "../../core/types"
+import { HTTPException } from "hono/http-exception"
 
-const mockChannel = {
-  channel_id: "123e4567-e89b-12d3-a456-426614174000" ,
-    channel_name: "admin" ,
-    category_id: "123e4567-e89b-12d3-a456-426614174000"
-}
+/**
+ * Channel Service
+ * チャンネル管理および権限割り当てのビジネスロジックを提供します。
+ */
 
+const mockChannel = { 
+    channel_id: "ch-123", 
+    channel_name: "General", 
+    category_id: "cat-123" 
+};
 
-export const createChannelService = async (c: Context<AppContext> ) => {
-    return c.json(mockChannel, 201);
-}
+const mockRole = { 
+    role_id: "r-123", 
+    role_name: "admin" 
+};
 
-export const getChannelService = async (c: Context<AppContext> ) => {
-    return c.json(mockChannel, 200);
-}
+// --- Create ---
 
-export const updateChannelService = async (c: Context<AppContext> ) => {
-    return c.json(mockChannel, 200);
-}
+export const createChannelService = async (c: Context<AppContext>) => {
+    const body = await c.req.json();
+    return c.json({ ...mockChannel, ...body }, 201);
+};
 
-export const deleteChannelService =async (c: Context<AppContext> ) => {
-    return c.json(null, 200);
-}
+// --- Read ---
+
+export const getChannelService = async (c: Context<AppContext>) => {
+    const id = c.req.param("id");
+    return c.json({ ...mockChannel, channel_id: id }, 200);
+};
+
+export const getChannelRolesService = async (c: Context<AppContext>) => {
+    return c.json([mockRole], 200);
+};
+
+// --- Update ---
+
+export const updateChannelService = async (c: Context<AppContext>) => {
+    const id = c.req.param("id");
+    const body = await c.req.json();
+    return c.json({ ...mockChannel, ...body, channel_id: id }, 200);
+};
+
+export const updateChannelRolesService = async (c: Context<AppContext>) => {
+    const user = c.get("appUser");
+    if (user.role !== "admin") throw new HTTPException(403);
+    const body = await c.req.json();
+    return c.json([mockRole], 200);
+};
+
+// --- Delete ---
+
+export const deleteChannelService = async (c: Context<AppContext>) => {
+    return c.body(null, 204);
+};

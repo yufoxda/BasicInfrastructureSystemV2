@@ -1,5 +1,13 @@
+/**
+ * User API
+ * 
+ * ユーザーの基本情報（プロフィール）および権限（Role）を管理します。
+ * 自身の情報操作（/me）と、管理者による他者の情報操作（/{id}）をサポートします。
+ */
+
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { UserSchema, UpdateUserSchema } from "./schema";
+import { roleSchema } from "../role/schema";
 import type { AppContext } from "../../core/types";
 import { 
     createUserService, 
@@ -9,199 +17,202 @@ import {
     updateUserMeService,
     updateUserByIdService,
     deleteUserByIdService,
+    getUserRolesService,
+    updateUserRolesService
 } from "./service";
 
 // ***** users *****
 // ユーザー情報の管理
-// /me: 自分自身の情報を操作する
-// /:id: 管理者(admin)のみが他者の情報を操作できる
-// /: 一覧取得や作成
 // path: /user
 // *****************
 
-// create (admin only)
+// --- Create ---
+
+/**
+ * ユーザーの新規作成 (admin)
+ */
 const createUserRoute = createRoute({
-    method: 'post',
-    path: '/',
+    method: "post",
+    path: "/",
     responses: {
         201: {
-            description: 'ユーザーの作成に成功',
-            content: {
-                'application/json': {
-                    schema: UserSchema,
-                },
-            },
-        },
-        400: {
-            description: 'リクエストが不正',
-        },
-    },
+            description: "ユーザー作成成功",
+            content: { "application/json": { schema: UserSchema } }
+        }
+    }
 });
 
-// read
+// --- Read ---
 
-// list (admin only)
+/**
+ * ユーザー一覧の取得 (admin)
+ */
 const listUsersRoute = createRoute({
-    method: 'get',
-    path: '/',
+    method: "get",
+    path: "/",
     responses: {
         200: {
-            description: 'ユーザー一覧の取得に成功',
-            content: {
-                'application/json': {
-                    schema: UserSchema.array(),
-                },
-            },
-        },
-        403: {
-            description: '権限がありません',
-        },
-    },
-})
+            description: "ユーザー一覧取得成功",
+            content: { "application/json": { schema: UserSchema.array() } }
+        }
+    }
+});
 
-// 自身
+/**
+ * 自身のユーザー情報取得
+ */
 const getUserMeRoute = createRoute({
-    method: 'get',
-    path: '/me',
+    method: "get",
+    path: "/me",
     responses: {
         200: {
-            description: '自身のユーザー情報の取得に成功',
-            content: {
-                'application/json': {
-                    schema: UserSchema,
-                },
-            },
-        },
-        401: {
-            description: '認証エラー',
-        },
-    },
-})
+            description: "自身の情報取得成功",
+            content: { "application/json": { schema: UserSchema } }
+        }
+    }
+});
 
-//  特定ID (admin only)
+/**
+ * 自身のロール一覧取得
+ */
+const getUserMeRolesRoute = createRoute({
+    method: "get",
+    path: "/me/role",
+    responses: {
+        200: {
+            description: "自身のロール一覧取得成功",
+            content: { "application/json": { schema: roleSchema.array() } }
+        }
+    }
+});
+
+/**
+ * 特定ユーザーの情報取得 (admin)
+ */
 const getUserByIdRoute = createRoute({
-    method: 'get',
-    path: '/{id}',
+    method: "get",
+    path: "/{id}",
     request: {
-        params: z.object({
-            id: z.string().openapi({ example: 'user-123' }),
-        }),
+        params: z.object({ id: z.string() })
     },
     responses: {
         200: {
-            description: 'ユーザー情報の取得に成功',
-            content: {
-                'application/json': {
-                    schema: UserSchema,
-                },
-            },
-        },
-        403: {
-            description: '権限がありません',
-        },
-        404: {
-            description: 'ユーザーが見つからない',
-        },
-    },
-})
+            description: "特定ユーザーの情報取得成功",
+            content: { "application/json": { schema: UserSchema } }
+        }
+    }
+});
 
-// update 自身
+/**
+ * 特定ユーザーのロール一覧取得 (admin)
+ */
+const getUserRolesByIdRoute = createRoute({
+    method: "get",
+    path: "/{id}/role",
+    request: {
+        params: z.object({ id: z.string() })
+    },
+    responses: {
+        200: {
+            description: "特定ユーザーのロール一覧取得成功",
+            content: { "application/json": { schema: roleSchema.array() } }
+        }
+    }
+});
+
+// --- Update ---
+
+/**
+ * 自身のユーザー情報更新
+ */
 const updateUserMeRoute = createRoute({
-    method: 'put',
-    path: '/me',
+    method: "put",
+    path: "/me",
     request: {
         body: {
-            content: {
-                'application/json': {
-                    schema: UpdateUserSchema,
-                },
-            },
-        },
+            content: { "application/json": { schema: UpdateUserSchema } }
+        }
     },
     responses: {
         200: {
-            description: '自身のユーザー情報の更新に成功',
-            content: {
-                'application/json': {
-                    schema: UserSchema,
-                },
-            },
-        },
-        400: {
-            description: 'リクエストが不正',
-        },
-        401: {
-            description: '認証エラー',
-        },
-    },
-})
+            description: "自身の情報更新成功",
+            content: { "application/json": { schema: UserSchema } }
+        }
+    }
+});
 
-// update 特定ID (admin only)
+/**
+ * 特定ユーザーの情報更新 (admin)
+ */
 const updateUserByIdRoute = createRoute({
-    method: 'put',
-    path:'/{id}',
+    method: "put",
+    path: "/{id}",
     request: {
-        params: z.object({
-            id: z.string().openapi({ example: 'user-123' }),
-        }),
+        params: z.object({ id: z.string() }),
         body: {
-            content: {
-                'application/json': {
-                    schema: UpdateUserSchema,
-                },
-            },
-        },
+            content: { "application/json": { schema: UpdateUserSchema } }
+        }
     },
     responses: {
         200: {
-            description: 'ユーザー情報の更新に成功',
-            content: {
-                'application/json': {
-                    schema: UserSchema,
-                },
-            },
-        },
-        403: {
-            description: '権限がありません',
-        },
-        400: {
-            description: 'リクエストが不正',
-        },
-        404: {
-            description: 'ユーザーが見つからない',
-        },
-    },
-})
+            description: "特定ユーザーの情報更新成功",
+            content: { "application/json": { schema: UserSchema } }
+        }
+    }
+});
 
-// delete 特定ID (admin only)
-const deleteUserByIdRoute = createRoute({
-    method: 'delete',
-    path: '/{id}',
+/**
+ * 特定ユーザーのロール割り当て更新 (admin)
+ */
+const updateUserRolesRoute = createRoute({
+    method: "put",
+    path: "/{id}/role",
     request: {
-        params: z.object({
-            id: z.string().openapi({ example: 'user-123' }),
-        }),
+        params: z.object({ id: z.string() }),
+        body: {
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        role_ids: z.string().array().openapi({ example: ["role-1", "role-2"] })
+                    })
+                }
+            }
+        }
+    },
+    responses: {
+        200: {
+            description: "ロール割り当て更新成功",
+            content: { "application/json": { schema: roleSchema.array() } }
+        }
+    }
+});
+
+// --- Delete ---
+
+/**
+ * 特定ユーザーの削除 (admin)
+ */
+const deleteUserByIdRoute = createRoute({
+    method: "delete",
+    path: "/{id}",
+    request: {
+        params: z.object({ id: z.string() })
     },
     responses: {
         204: {
-            description: 'ユーザーの削除に成功',
-        },
-        403: {
-            description: '権限がありません',
-        },
-        404: {
-            description: 'ユーザーが見つからない',
-        },
-    },
-})
-
-// --- api ---
+            description: "ユーザー削除成功"
+        }
+    }
+});
 
 export const userRouter = new OpenAPIHono<AppContext>()
     .openapi(createUserRoute, createUserService)
     .openapi(listUsersRoute, listUsersService)
     .openapi(getUserMeRoute, getUserMeService)
+    .openapi(getUserMeRolesRoute, getUserRolesService)
     .openapi(getUserByIdRoute, getUserByIdService)
+    .openapi(getUserRolesByIdRoute, getUserRolesService)
     .openapi(updateUserMeRoute, updateUserMeService)
     .openapi(updateUserByIdRoute, updateUserByIdService)
-    .openapi(deleteUserByIdRoute, deleteUserByIdService)
+    .openapi(updateUserRolesRoute, updateUserRolesService)
+    .openapi(deleteUserByIdRoute, deleteUserByIdService);
