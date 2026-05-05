@@ -1,37 +1,45 @@
-import type { Context } from 'hono'
-import { AppContext } from '../../core/types'
+import type { Context } from "hono"
+import { AppContext } from "../../core/types"
 
-const mockRole = {
-    id: 'role-123',
-    display_name: 'admin',
-    created_at: '2024-01-01T12:00:00Z',
-    updated_at: '2024-01-02T12:00:00Z',
-}
+// ***** role *****
+// ロール定義の管理ロジック
+// ロールの名前や ID などのマスターデータを操作します
+// *****************
 
-export const createRoleService = async (c: Context<AppContext> ) => {
-    return c.json(mockRole, 201);
-}
+const mockRole = { 
+    role_id: "r-123", 
+    role_name: "admin" 
+};
 
-export const getRolesService = async (c: Context<AppContext> ) => {
+// create
+// ロールを新規作成する
+export const createRoleService = async (c: Context<AppContext>) => {
+    const body = await c.req.json();
+    return c.json({ ...mockRole, ...body }, 201);
+};
+
+// read
+// ロール一覧を取得する
+export const listRolesService = async (c: Context<AppContext>) => {
     return c.json([mockRole], 200);
-}
+};
 
-export const getRolesByUserIdService = async (c: Context<AppContext> ) => {
-    return c.json([mockRole], 200);
-}
+// 特定のロール情報を取得する
+export const getRoleByIdService = async (c: Context<AppContext>) => {
+    const id = c.req.param("id");
+    return c.json({ ...mockRole}, 200);
+};
 
-export const getRoleByRoleIdService =async (c: Context<AppContext> ) => {
-    return c.json(mockRole, 200);
-}
+// update
+// ロール情報を更新する
+export const updateRoleService = async (c: Context<AppContext>) => {
+    const id = c.req.param("id");
+    const body = await c.req.json();
+    return c.json({ ...mockRole, ...body, role_id: id }, 200);
+};
 
-export const updateRolesService = async (c: Context<AppContext> ) => {
-    return c.json([mockRole], 200);
-}
-
-export const updateRoleService = async (c: Context<AppContext> ) => {
-    return c.json(mockRole, 200);
-}
-
-export const deleteRoleService =async (c: Context<AppContext> ) => {
-    return c.json(null, 200);
-}
+// delete
+// ロールを削除する
+export const deleteRoleService = async (c: Context<AppContext>) => {
+    return c.body(null, 204);
+};
