@@ -1,15 +1,8 @@
-/**
- * Channel API
- * 
- * メッセージ投稿の場となるチャンネルを管理します。
- * チャンネルごとのアクセス権限（Role）の管理もここで行います。
- */
-
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { channelSchema, updateChannelSchema } from "./schema";
+import { createRoute , OpenAPIHono, z } from "@hono/zod-openapi"
+import { channelSchema, updateChannelSchema} from "./schema" 
 import { roleSchema } from "../role/schema";
-import { AppContext } from "../../core/types";
-import { authMiddleware } from "../../core/auth";
+import { AppContext } from "../../core/types"
+import { authMiddleware } from "../../core/auth"
 import {
     createChannelService,
     getChannelService,
@@ -17,18 +10,18 @@ import {
     deleteChannelService,
     getChannelRolesService,
     updateChannelRolesService
-} from "./service";
+} from "./service"
 
 // ***** channel *****
 // チャンネルの管理
-// path: /channel
+// メッセージ投稿の場となるチャンネルと、そのアクセス権限（Role）を管理します
+// /: チャンネルの新規作成 (admin)
+// /{id}: 特定チャンネルの取得・更新・削除 (admin)
+// /{id}/role: チャンネルに許可されたロールの取得・更新 (admin)
 // *****************
 
-// --- Create ---
-
-/**
- * 新規チャンネルの作成 (admin)
- */
+// create
+// 新規チャンネルを作成する
 const createChannelRoute = createRoute({
     method: "post",
     path: "/",
@@ -41,11 +34,8 @@ const createChannelRoute = createRoute({
     }
 });
 
-// --- Read ---
-
-/**
- * チャンネル詳細の取得
- */
+// read
+// 特定のチャンネル情報を取得する
 const getChannelRoute = createRoute({
     method: "get",
     path: "/{id}",
@@ -61,9 +51,7 @@ const getChannelRoute = createRoute({
     }
 });
 
-/**
- * チャンネルに割り当てられたロール一覧の取得
- */
+// チャンネルに割り当てられたロール一覧を取得する
 const getChannelRolesRoute = createRoute({
     method: "get",
     path: "/{id}/role",
@@ -78,11 +66,8 @@ const getChannelRolesRoute = createRoute({
     }
 });
 
-// --- Update ---
-
-/**
- * チャンネルの更新 (admin)
- */
+// update
+// チャンネル情報を更新する
 const updateChannelRoute = createRoute({
     method: "put",
     path: "/{id}",
@@ -98,9 +83,7 @@ const updateChannelRoute = createRoute({
     }
 });
 
-/**
- * チャンネルのロール割り当て更新 (admin)
- */
+// チャンネルのロール割り当てを更新する
 const updateChannelRolesRoute = createRoute({
     method: "put",
     path: "/{id}/role",
@@ -124,11 +107,8 @@ const updateChannelRolesRoute = createRoute({
     }
 });
 
-// --- Delete ---
-
-/**
- * チャンネルの削除 (admin)
- */
+// delete
+// チャンネルを削除する
 const deleteChannelRoute = createRoute({
     method: "delete",
     path: "/{id}",

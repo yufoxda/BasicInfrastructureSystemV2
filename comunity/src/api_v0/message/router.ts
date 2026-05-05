@@ -4,10 +4,13 @@ import type { AppContext } from "../../core/types";
 import { createMessageService } from "./service";
 
 // ***** message *****
-// メッセージの送信
-// path: /message
+// メッセージの管理
+// チャンネル内へのメッセージ投稿を管理します
+// /: メッセージの新規作成
 // *****************
 
+// create
+// 新しいメッセージを投稿する
 const createMessageRoute = createRoute({
     method: "post",
     path: "/",
@@ -22,7 +25,7 @@ const createMessageRoute = createRoute({
     },
     responses: {
         201: {
-            description: "メッセージの送信に成功",
+            description: "メッセージ送信成功",
             content: {
                 "application/json": {
                     schema: messageSchema,

@@ -1,11 +1,3 @@
-/**
- * Role API
- * 
- * ロールの定義（マスターデータ）を管理します。
- * システム全体で利用可能なロールの作成・一覧・更新・削除をサポートします。
- * （※ユーザーへの割り当ては User API で行います）
- */
-
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { roleSchema, updateRoleSchema } from "./schema";
 import type { AppContext } from "../../core/types";
@@ -17,16 +9,15 @@ import {
     deleteRoleService
 } from "./service";
 
-// ***** roles *****
-// ロール定義の管理
-// path: /role
+// ***** role *****
+// ロール定義（マスターデータ）の管理
+// システム全体で利用可能なロール（管理者、一般等）の定義自体を操作します
+// /: ロールの一覧取得、新規作成 (admin)
+// /{id}: 特定のロール定義の取得・更新・削除 (admin)
 // *****************
 
-// --- Create ---
-
-/**
- * 新しいロールを定義する (admin)
- */
+// create
+// 新しいロールを定義する
 const createRoleRoute = createRoute({
     method: "post",
     path: "/",
@@ -41,11 +32,8 @@ const createRoleRoute = createRoute({
     }
 });
 
-// --- Read ---
-
-/**
- * 定義済みロールの一覧を取得
- */
+// read
+// 定義済みロールの一覧を取得する
 const listRolesRoute = createRoute({
     method: "get",
     path: "/",
@@ -57,9 +45,7 @@ const listRolesRoute = createRoute({
     }
 });
 
-/**
- * ロール定義の詳細を取得
- */
+// ロール定義の詳細を取得する
 const getRoleByIdRoute = createRoute({
     method: "get",
     path: "/{id}",
@@ -74,11 +60,8 @@ const getRoleByIdRoute = createRoute({
     }
 });
 
-// --- Update ---
-
-/**
- * ロール定義を更新する (admin)
- */
+// update
+// ロール定義を更新する
 const updateRoleRoute = createRoute({
     method: "put",
     path: "/{id}",
@@ -94,11 +77,8 @@ const updateRoleRoute = createRoute({
     }
 });
 
-// --- Delete ---
-
-/**
- * ロール定義を削除する (admin)
- */
+// delete
+// ロール定義を削除する
 const deleteRoleRoute = createRoute({
     method: "delete",
     path: "/{id}",

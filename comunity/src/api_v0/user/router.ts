@@ -1,10 +1,3 @@
-/**
- * User API
- * 
- * ユーザーの基本情報（プロフィール）および権限（Role）を管理します。
- * 自身の情報操作（/me）と、管理者による他者の情報操作（/{id}）をサポートします。
- */
-
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { UserSchema, UpdateUserSchema } from "./schema";
 import { roleSchema } from "../role/schema";
@@ -21,16 +14,18 @@ import {
     updateUserRolesService
 } from "./service";
 
-// ***** users *****
+// ***** user *****
 // ユーザー情報の管理
-// path: /user
+// /me は自分自身の情報を操作し、/{id} は管理者が他者の情報を操作します
+// /: ユーザーの作成、一覧取得 (admin)
+// /me: 自身のユーザー情報取得・更新
+// /me/role: 自身のロール一覧取得
+// /{id}: 特定ユーザーの情報取得・更新・削除 (admin)
+// /{id}/role: 特定ユーザーのロール一覧取得・更新 (admin)
 // *****************
 
-// --- Create ---
-
-/**
- * ユーザーの新規作成 (admin)
- */
+// create
+// ユーザーを新規作成する
 const createUserRoute = createRoute({
     method: "post",
     path: "/",
@@ -42,11 +37,8 @@ const createUserRoute = createRoute({
     }
 });
 
-// --- Read ---
-
-/**
- * ユーザー一覧の取得 (admin)
- */
+// read
+// ユーザー一覧を取得する
 const listUsersRoute = createRoute({
     method: "get",
     path: "/",
@@ -58,9 +50,7 @@ const listUsersRoute = createRoute({
     }
 });
 
-/**
- * 自身のユーザー情報取得
- */
+// 自身のユーザー情報を取得する
 const getUserMeRoute = createRoute({
     method: "get",
     path: "/me",
@@ -72,9 +62,7 @@ const getUserMeRoute = createRoute({
     }
 });
 
-/**
- * 自身のロール一覧取得
- */
+// 自身のロール一覧を取得する
 const getUserMeRolesRoute = createRoute({
     method: "get",
     path: "/me/role",
@@ -86,9 +74,7 @@ const getUserMeRolesRoute = createRoute({
     }
 });
 
-/**
- * 特定ユーザーの情報取得 (admin)
- */
+// 特定ユーザーの情報を取得する
 const getUserByIdRoute = createRoute({
     method: "get",
     path: "/{id}",
@@ -103,9 +89,7 @@ const getUserByIdRoute = createRoute({
     }
 });
 
-/**
- * 特定ユーザーのロール一覧取得 (admin)
- */
+// 特定ユーザーのロール一覧を取得する
 const getUserRolesByIdRoute = createRoute({
     method: "get",
     path: "/{id}/role",
@@ -120,11 +104,8 @@ const getUserRolesByIdRoute = createRoute({
     }
 });
 
-// --- Update ---
-
-/**
- * 自身のユーザー情報更新
- */
+// update
+// 自身のユーザー情報を更新する
 const updateUserMeRoute = createRoute({
     method: "put",
     path: "/me",
@@ -141,9 +122,7 @@ const updateUserMeRoute = createRoute({
     }
 });
 
-/**
- * 特定ユーザーの情報更新 (admin)
- */
+// 特定ユーザーの情報を更新する
 const updateUserByIdRoute = createRoute({
     method: "put",
     path: "/{id}",
@@ -161,9 +140,7 @@ const updateUserByIdRoute = createRoute({
     }
 });
 
-/**
- * 特定ユーザーのロール割り当て更新 (admin)
- */
+// 特定ユーザーのロール割り当てを更新する
 const updateUserRolesRoute = createRoute({
     method: "put",
     path: "/{id}/role",
@@ -187,11 +164,8 @@ const updateUserRolesRoute = createRoute({
     }
 });
 
-// --- Delete ---
-
-/**
- * 特定ユーザーの削除 (admin)
- */
+// delete
+// 特定ユーザーを削除する
 const deleteUserByIdRoute = createRoute({
     method: "delete",
     path: "/{id}",

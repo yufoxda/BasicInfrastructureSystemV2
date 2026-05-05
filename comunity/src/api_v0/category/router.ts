@@ -1,10 +1,3 @@
-/**
- * Category API
- * 
- * チャンネルをグループ化するためのカテゴリを管理します。
- * カテゴリごとのアクセス権限（Role）の管理もここで行います。
- */
-
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { categorySchema, createCategorySchema, updateCategorySchema } from "./schema";
 import { roleSchema } from "../role/schema";
@@ -20,15 +13,15 @@ import {
 } from "./service";
 
 // ***** category *****
-// カテゴリの管理
-// path: /category
+// チャンネルカテゴリの管理
+// チャンネルを束ねるカテゴリと、そのアクセス権限（Role）を管理します
+// /: カテゴリの一覧取得、新規作成 (admin)
+// /{id}: 特定カテゴリの取得・更新・削除 (admin)
+// /{id}/role: カテゴリに許可されたロールの取得・更新 (admin)
 // *****************
 
-// --- Create ---
-
-/**
- * 新規カテゴリの作成 (admin)
- */
+// create
+// 新規カテゴリを作成する
 const createCategoryRoute = createRoute({
     method: "post",
     path: "/",
@@ -43,11 +36,8 @@ const createCategoryRoute = createRoute({
     }
 });
 
-// --- Read ---
-
-/**
- * カテゴリ一覧の取得
- */
+// read
+// カテゴリ一覧を取得する
 const listCategoriesRoute = createRoute({
     method: "get",
     path: "/",
@@ -59,9 +49,7 @@ const listCategoriesRoute = createRoute({
     }
 });
 
-/**
- * カテゴリ詳細の取得
- */
+// カテゴリ詳細を取得する
 const getCategoryByIdRoute = createRoute({
     method: "get",
     path: "/{id}",
@@ -76,9 +64,7 @@ const getCategoryByIdRoute = createRoute({
     }
 });
 
-/**
- * カテゴリに割り当てられたロール一覧の取得
- */
+// カテゴリに割り当てられたロール一覧を取得する
 const getCategoryRolesRoute = createRoute({
     method: "get",
     path: "/{id}/role",
@@ -93,11 +79,8 @@ const getCategoryRolesRoute = createRoute({
     }
 });
 
-// --- Update ---
-
-/**
- * カテゴリの更新 (admin)
- */
+// update
+// カテゴリ情報を更新する
 const updateCategoryRoute = createRoute({
     method: "put",
     path: "/{id}",
@@ -113,9 +96,7 @@ const updateCategoryRoute = createRoute({
     }
 });
 
-/**
- * カテゴリのロール割り当て更新 (admin)
- */
+// カテゴリのロール割り当てを更新する
 const updateCategoryRolesRoute = createRoute({
     method: "put",
     path: "/{id}/role",
@@ -139,11 +120,8 @@ const updateCategoryRolesRoute = createRoute({
     }
 });
 
-// --- Delete ---
-
-/**
- * カテゴリの削除 (admin)
- */
+// delete
+// カテゴリを削除する
 const deleteCategoryRoute = createRoute({
     method: "delete",
     path: "/{id}",
