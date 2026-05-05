@@ -7,7 +7,7 @@ import { dbMiddleware } from './core/db'
 import { authMiddleware } from './core/auth'
 import { errorHandler } from './core/error'
 
-import { userRouter } from './features/user/router'
+import { apiv0Router } from './api_v0/router'
 
 
 
@@ -28,7 +28,7 @@ const app = new OpenAPIHono<AppContext>()
     }));
   })
   .use('/ui', swaggerUI({ url: '/doc' }))
-  .route('/users', userRouter)
+  .route('/api/v0', apiv0Router)
 
 
   .onError(errorHandler)

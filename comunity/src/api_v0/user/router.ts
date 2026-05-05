@@ -9,7 +9,6 @@ import {
     updateUserByIdService,
     deleteUserByIdService,
 } from "./service";
-import { get } from "node:http";
 
 // ***** users *****
 // ユーザー情報の管理
